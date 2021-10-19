@@ -38,13 +38,16 @@
         <tr>
           <th class="ordering" onclick="window.location='/emissions/?order_by=imo'">IMO</th>
           <th class="ordering" onclick="window.location='/emissions/?order_by=ship_name'">Ship Name</th>
-          <th class="ordering" onclick="window.location='/emissions/?order_by=technical_efficiency_number'">EEDI</th>
+          <th class="ordering" onclick="window.location='/emissions/?order_by=technical_efficiency_number'">EEDI</th> 
+	  <th class="ordering" onclick="window.location='/emissions/?order_by=ship_type'">Ship Type</th> 
+	  <th class="ordering" onclick="window.location='/emissions/?order_by=issue'">Issue Date</th> 
+	  <th class="ordering" onclick="window.location='/emissions/?order_by=expiry'">Expiry Date</th> 
         </tr>
       </thead>
       {% for row in rows %}
         <tr style="cursor:pointer;" onclick="window.location='/emissions/imo/{{ row.imo }}'">
           {% for val in row %}
-          <td>{{ val|default:'' }}</td>
+          <td>{{ val|default:'0' }}</td>
           {% endfor %}
         </tr>
       {% endfor %}

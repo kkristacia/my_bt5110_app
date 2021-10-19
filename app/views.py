@@ -11,7 +11,10 @@ PAGE_SIZE = 20
 COLUMNS = [
     'imo',
     'ship_name',
-    'technical_efficiency_number'
+    'technical_efficiency_number',
+    'ship_type',
+    'issue',
+    'expiry'
 ]
 
 

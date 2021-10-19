@@ -26,5 +26,8 @@ class ImoForm(forms.Form):
     imo = forms.IntegerField(label='IMO Number', min_value=1111111, max_value=9999999)
     ship_name = forms.CharField(max_length=64)
     technical_efficiency_number = forms.DecimalField(label='EEDI', max_digits=6, min_value=0, required=False)
+    ship_type=forms.CharField(max_length=64)
+    issue = forms.DateField(widget=forms.widgets.DateInput(attrs={'type': 'date'}), required=False)
+    expiry = forms.DateField(widget=forms.widgets.DateInput(attrs={'type': 'date'}), required=False)
     # my_choice_field = forms.ChoiceField(choices=get_choices('col'), required=False)
     # my_date_field = forms.DateField(widget=forms.widgets.DateInput(attrs={'type': 'date'}), required=False)
