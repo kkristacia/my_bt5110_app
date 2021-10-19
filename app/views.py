@@ -71,6 +71,42 @@ def emissions(request, page=1):
     }
     return render(request, 'emissions.html', context)
 
+def emissions2(request, page=1):
+    """Shows the emissions table page"""
+    msg = None
+    order_by = request.GET.get('order_by', '')
+    order_by = order_by if order_by in COLUMNS else 'imo'
+
+    with connections['default'].cursor() as cursor:
+        cursor.execute('SELECT COUNT(*) FROM co2emission_reduced')
+        count = cursor.fetchone()[0]
+        num_pages = (count - 1) // PAGE_SIZE + 1
+        page = clamp(page, 1, num_pages)
+
+        offset = (page - 1) * PAGE_SIZE
+        cursor.execute(f'''
+            SELECT {", ".join(COLUMNS)}
+            FROM co2emission_reduced
+            ORDER BY {order_by}
+            OFFSET %s
+            LIMIT %s
+        ''', [offset, PAGE_SIZE])
+        rows = namedtuplefetchall(cursor)
+
+    imo_deleted = request.GET.get('deleted', False)
+    if imo_deleted:
+        msg = f'✔ IMO {imo_deleted} deleted'
+
+    context = {
+        'nbar': 'emissions',
+        'page': page,
+        'rows': rows,
+        'num_pages': num_pages,
+        'msg': msg,
+        'order_by': order_by
+    }
+    return render(request, 'emissions2.html', context)
+
 
 def insert_update_values(form, post, action, imo):
     """
