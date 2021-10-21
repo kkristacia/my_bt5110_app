@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %} Aggregation {% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding-bottom: 50px;">
+  <h2>Aggregation</h2>
+  {% if msg %}
+    <span class="text-success h4">{{ msg }}</span>
+  {% endif %}
+<!--  <p>Showing page {{ page }} of {{ num_pages }} pages</p>
+  <button
+    class="btn btn-primary"
+    {% if page == 1 %} disabled {% endif %}
+    onclick="location.href='/aggregation/{{page|add:"-1"}}?order_by={{ order_by }}';"
+  >
+    ❮ Previous
+  </button>
+  <button
+    class="btn btn-primary"
+    {% if page == num_pages %} disabled {% endif %}
+    onclick="location.href='/aggregation/{{page|add:"1"}}?order_by={{ order_by }}';"
+  >
+    Next ❯
+  </button>
+  <button
+    class="btn btn-success"
+    onclick="location.href='/aggregation/imo/';"
+    style="float: right;"
+  >
+    Insert new
+  </button> -->
+  <br/>
+  <br/>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th class="ordering" onclick="window.location='/aggregation/?order_by=imo'">count</th>
+          <th class="ordering" onclick="window.location='/aggregation/?order_by=ship_name'">ship_type</th>
+          <th class="ordering" onclick="window.location='/aggregation/?order_by=technical_efficiency_number'">min</th> 
+	  <th class="ordering" onclick="window.location='/aggregation/?order_by=ship_type'">avg</th> 
+	  <th class="ordering" onclick="window.location='/aggregation/?order_by=issue'">max</th> 
+	  <!--<th class="ordering" onclick="window.location='/aggregation/?order_by=expiry'">Expiry Date</th> -->
+        </tr>
+      </thead>
+      {% for row in rows %}
+    <!--    <tr style="cursor:pointer;" onclick="window.location='/aggregation/imo/{{ row.imo }}'"> -->
+          {% for val in row %}
+          <td>{{ val|default:'0' }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}
