@@ -8,5 +8,9 @@ Hello, and welcome to my herokuapp. It is deployed on:
 My github page is on:
 ## https://github.com/chenhongGitHub/my_bt5110_app
 
+I referred some plotting guide from:
+## https://albertrtk.github.io/2021/01/24/Graph-on-a-web-page-with-Plotly-and-Django.html
+## https://github.com/AlbertRtk/django_sandbox/find/main
+
 Thank you. 
 
