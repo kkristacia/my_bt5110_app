@@ -4,6 +4,10 @@ from django.shortcuts import redirect
 from django.http import Http404
 from django.db.utils import IntegrityError
 
+from plotly.offline import plot
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
 from app.utils import namedtuplefetchall, clamp
 from app.forms import ImoForm
 
@@ -15,6 +19,14 @@ COLUMNS = [
     'ship_type',
     'issue',
     'expiry'
+]
+
+COLUMNS2 = [
+    'count',
+    'ship_type',
+    'min',
+    'avg',
+    'max'
 ]
 
 
@@ -33,6 +45,42 @@ def db(request):
 
     context = {'greetings': greetings, 'nbar': 'db'}
     return render(request, 'db.html', context)
+
+def aggregation(request, page=1):
+    """Shows the emissions table page"""
+    msg = None
+    order_by = request.GET.get('order_by', '')
+    order_by = order_by if order_by in COLUMNS else 'imo'
+
+    with connections['default'].cursor() as cursor:
+        cursor.execute('select count(distinct c.imo), c.ship_type, min(c.technical_efficiency_number), avg(c.technical_efficiency_number), max(c.technical_efficiency_number) from co2emission_reduced as c group by c.ship_type;')
+        count = cursor.fetchone()[0]
+        num_pages = (count - 1) // PAGE_SIZE + 1
+        page = clamp(page, 1, num_pages)
+
+        offset = (page - 1) * PAGE_SIZE
+        cursor.execute(f'''
+            SELECT {"count(distinct c.imo), c.ship_type, min(c.technical_efficiency_number), avg(c.technical_efficiency_number), max(c.technical_efficiency_number)"}
+	    FROM co2emission_reduced as c
+            GROUP BY c.ship_type
+            OFFSET %s
+            LIMIT %s
+        ''', [offset, PAGE_SIZE])
+        rows = namedtuplefetchall(cursor)
+
+    imo_deleted = request.GET.get('deleted', False)
+    if imo_deleted:
+        msg = f'✔ IMO {imo_deleted} deleted'
+
+    context = {
+        'nbar': 'aggregation',
+        'page': page,
+        'rows': rows,
+        'num_pages': num_pages,
+        'msg': msg,
+        'order_by': order_by
+    }
+    return render(request, 'aggregation.html', context)
 
 
 def emissions(request, page=1):
@@ -70,42 +118,6 @@ def emissions(request, page=1):
         'order_by': order_by
     }
     return render(request, 'emissions.html', context)
-
-def emissions2(request, page=1):
-    """Shows the emissions table page"""
-    msg = None
-    order_by = request.GET.get('order_by', '')
-    order_by = order_by if order_by in COLUMNS else 'imo'
-
-    with connections['default'].cursor() as cursor:
-        cursor.execute('SELECT COUNT(*) FROM co2emission_reduced')
-        count = cursor.fetchone()[0]
-        num_pages = (count - 1) // PAGE_SIZE + 1
-        page = clamp(page, 1, num_pages)
-
-        offset = (page - 1) * PAGE_SIZE
-        cursor.execute(f'''
-            SELECT {", ".join(COLUMNS)}
-            FROM co2emission_reduced
-            ORDER BY {order_by}
-            OFFSET %s
-            LIMIT %s
-        ''', [offset, PAGE_SIZE])
-        rows = namedtuplefetchall(cursor)
-
-    imo_deleted = request.GET.get('deleted', False)
-    if imo_deleted:
-        msg = f'✔ IMO {imo_deleted} deleted'
-
-    context = {
-        'nbar': 'emissions',
-        'page': page,
-        'rows': rows,
-        'num_pages': num_pages,
-        'msg': msg,
-        'order_by': order_by
-    }
-    return render(request, 'emissions2.html', context)
 
 
 def insert_update_values(form, post, action, imo):
@@ -202,3 +214,70 @@ def emission_detail(request, imo=None):
         'success': success
     }
     return render(request, 'emission_detail.html', context)
+
+
+def visual(request):
+    """ 
+    View demonstrating how to display a graph object
+    on a web page with Plotly. 
+    """
+    
+    #cursor = conn.cursor()    
+ 
+    with connections['default'].cursor() as cursor:
+        cursor.execute('select count(distinct c.imo), c.ship_type, min(c.technical_efficiency_number), avg(c.technical_efficiency_number), max(c.technical_efficiency_number) from co2emission_reduced as c group by c.ship_type;')
+        
+        rows = cursor.fetchall() #if this is here, indented, then its fine
+    #print(str(rows))
+    # Generating some data for plots.
+    li_avg=[]
+    li_x=[]
+    li_name=[]
+    li_max=[]
+    for i in range(len(rows)):
+        #print(rows[i][3])
+        li_avg.append(rows[i][3])
+        li_x.append(i)
+        li_name.append(rows[i][1])
+        li_max.append(rows[i][4])
+
+    # List of graph objects for figure.
+    # Each object will contain on series of data.
+    graphs = []
+    
+    fig1 = go.Bar(x=li_name,y=li_avg) 
+
+    fig2 = go.Pie(labels=li_name,values=li_max) 
+	
+    # Adding linear plot of y1 vs. x.
+    #graphs.append(
+    #	fig
+    #)
+
+
+    # Setting layout of the figure.
+    layout = {
+        'title': 'Barchart of each ship type avg EEDI',
+        'xaxis_title': 'Ship type',
+        'yaxis_title': 'avg EEDI',
+        'height': 620,
+        'width': 560,
+    }
+    layout2 = {
+        'title': 'Pie chart of each ship type max EEDI',
+        'xaxis_title': 'Ship type',
+        'yaxis_title': 'avg EEDI',
+        'height': 620,
+        'width': 560,
+    }
+
+    # Getting HTML needed to render the plot.
+    plot_div = plot({'data': fig1, 'layout': layout}, 
+                    output_type='div')
+    plot_div2 = plot({'data': fig2, 'layout': layout2}, 
+                    output_type='div')
+
+    return render(request, 'visual.html', 
+                  context={'plot_div': plot_div,'plot_div2':plot_div2,'nbar': 'visual'})
+
+
