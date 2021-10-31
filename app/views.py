@@ -18,7 +18,7 @@ COLUMNS = [
     'technical_efficiency_number',
     'ship_type',
     'issue',
-    'expiry'
+    'expiry',
 ]
 
 COLUMNS2 = [
@@ -26,7 +26,7 @@ COLUMNS2 = [
     'ship_type',
     'min',
     'avg',
-    'max'
+    'max',
 ]
 
 COLUMNS3 = [
@@ -41,14 +41,21 @@ COLUMNS3 = [
     'total_co2',
     'total_time_sea',
     'co2_emm_per_dist',
-    'co2_emm_per_tw'
+    'co2_emm_per_tw',
 ]
 
 COLUMNS4 = [
-    'ship_id',
-    'imo',
-    'ship_name',
-    'ship_type'
+    'verifier_id'
+]
+
+COLUMNS5 = [
+    'verifier_id',
+    'verifier_name',
+    'nab_company',
+    'verifier_address',
+    'verifier_city',
+    'accredition_no',
+    'verifier_country'
 ]
 
 
@@ -302,6 +309,8 @@ def visual(request):
     return render(request, 'visual.html', 
                   context={'plot_div': plot_div,'plot_div2':plot_div2,'nbar': 'visual'})
 
+
+
 def fact(request, page=1):
     """Shows the fact table page"""
     msg = None
@@ -337,6 +346,8 @@ def fact(request, page=1):
         'order_by': order_by
     }
     return render(request, 'fact.html', context)
+
+
 
 def ship_dim(request, page=1):
     """Shows the ship_dim table page"""
@@ -374,4 +385,41 @@ def ship_dim(request, page=1):
     }
     return render(request, 'ship_dim.html', context)
 
+
+
+def verifier_dim(request, page=1):
+    """Shows the verifier_dim table page"""
+    msg = None
+    order_by = request.GET.get('order_by', '')
+    order_by = order_by if order_by in COLUMNS5 else 'ship_id'
+
+    with connections['default'].cursor() as cursor:
+        cursor.execute('SELECT COUNT(*) FROM verifier_dim')
+        count = cursor.fetchone()[0]
+        num_pages = (count - 1) // PAGE_SIZE + 1
+        page = clamp(page, 1, num_pages)
+
+        offset = (page - 1) * PAGE_SIZE
+        cursor.execute(f'''
+            SELECT {", ".join(COLUMNS3)}
+            FROM fact
+	    ORDER BY {order_by}
+            OFFSET %s
+            LIMIT %s
+        ''', [offset, PAGE_SIZE])
+        rows = namedtuplefetchall(cursor)
+
+    imo_deleted = request.GET.get('deleted', False)
+    if imo_deleted:
+        msg = f'✔ IMO {imo_deleted} deleted'
+
+    context = {
+        'nbar': 'verifier_dim',
+        'page': page,
+        'rows': rows,
+        'num_pages': num_pages,
+        'msg': msg,
+        'order_by': order_by
+    }
+    return render(request, 'verifier_dim.html', context)
 
