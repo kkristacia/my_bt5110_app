@@ -18,7 +18,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('aggregation/', app.views.aggregation, name='aggregation'), 
     path('visual/', app.views.visual, name='visual'), 
-    path('fact/', app.views.fact, name='fact')
+    path('fact/', app.views.fact, name='fact'),
+    path('fact/<int:page>', app.views.fact, name='fact'),
+    path('ship_dim/', app.views.ship_dim, name='ship_dim'),
+    path('ship_dim/<int:page>', app.views.ship_dim, name='ship_dim'),
 ]
 
 

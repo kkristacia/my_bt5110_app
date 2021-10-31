@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %} Dimension table: Ship {% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="padding-bottom: 50px;">
+  <h2>Dimension table: Ship</h2>
+  {% if msg %}
+    <span class="text-success h4">{{ msg }}</span>
+  {% endif %}
+  <p>Showing page {{ page }} of {{ num_pages }} pages</p>
+  <button
+    class="btn btn-primary"
+    {% if page == 1 %} disabled {% endif %}
+    onclick="location.href='/ship_dim/{{page|add:"-1"}}?order_by={{ order_by }}';"
+  >
+    ❮ Previous
+  </button>
+  <button
+    class="btn btn-primary"
+    {% if page == num_pages %} disabled {% endif %}
+    onclick="location.href='/ship_dim/{{page|add:"1"}}?order_by={{ order_by }}';"
+  >
+    Next ❯
+  </button>
+<!--  <button
+    class="btn btn-success"
+    onclick="location.href='/ship_dim/ship_id/';"
+    style="float: right;"
+  >
+    Insert new
+  </button> -->
+  <br/>
+  <br/>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped">
+      <thead>
+        <tr>
+          <th class="ordering" onclick="window.location='/ship_dim/?order_by=ship_id'">ship_id</th>
+          <th class="ordering" onclick="window.location='/ship_dim/?order_by=imo'">imo</th>
+          <th class="ordering" onclick="window.location='/ship_dim/?order_by=ship_name'">ship_name</th> 
+	  <th class="ordering" onclick="window.location='/ship_dim/?order_by=ship_type'">ship_type</th> 
+        </tr>
+      </thead>
+      {% for row in rows %}
+ <!--       <tr style="cursor:pointer;" onclick="window.location='/ship_dim/ship_id/{{ row.ship_id}}'"> -->
+          {% for val in row %}
+          <td>{{ val|default:'0' }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

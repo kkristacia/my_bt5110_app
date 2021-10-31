@@ -29,6 +29,28 @@ COLUMNS2 = [
     'max'
 ]
 
+COLUMNS3 = [
+    'ship_id',
+    'verifier_id',
+    'eedi',
+    'report_period',
+    'port_regist',
+    'issue_date',
+    'expiry_date',
+    'total_fuel_consmp',
+    'total_co2',
+    'total_time_sea',
+    'co2_emm_per_dist',
+    'co2_emm_per_tw'
+]
+
+COLUMNS4 = [
+    'ship_id',
+    'imo',
+    'ship_name',
+    'ship_type'
+]
+
 
 def index(request):
     """Shows the main page"""
@@ -284,19 +306,19 @@ def fact(request, page=1):
     """Shows the fact table page"""
     msg = None
     order_by = request.GET.get('order_by', '')
-    order_by = order_by if order_by in COLUMNS else 'imo'
+    order_by = order_by if order_by in COLUMNS3 else 'ship_id'
 
     with connections['default'].cursor() as cursor:
-        cursor.execute('SELECT COUNT(*) FROM co2emission_reduced')
+        cursor.execute('SELECT COUNT(*) FROM fact')
         count = cursor.fetchone()[0]
         num_pages = (count - 1) // PAGE_SIZE + 1
         page = clamp(page, 1, num_pages)
 
         offset = (page - 1) * PAGE_SIZE
         cursor.execute(f'''
-            SELECT {", ".join(COLUMNS)}
-            FROM co2emission_reduced
-            ORDER BY {order_by}
+            SELECT {", ".join(COLUMNS3)}
+            FROM fact
+	    ORDER BY {order_by}
             OFFSET %s
             LIMIT %s
         ''', [offset, PAGE_SIZE])
@@ -307,7 +329,7 @@ def fact(request, page=1):
         msg = f'✔ IMO {imo_deleted} deleted'
 
     context = {
-        'nbar': 'emissions',
+        'nbar': 'fact',
         'page': page,
         'rows': rows,
         'num_pages': num_pages,
@@ -315,5 +337,41 @@ def fact(request, page=1):
         'order_by': order_by
     }
     return render(request, 'fact.html', context)
+
+def ship_dim(request, page=1):
+    """Shows the ship_dim table page"""
+    msg = None
+    order_by = request.GET.get('order_by', '')
+    order_by = order_by if order_by in COLUMNS4 else 'ship_id'
+
+    with connections['default'].cursor() as cursor:
+        cursor.execute('SELECT COUNT(*) FROM ship_dim')
+        count = cursor.fetchone()[0]
+        num_pages = (count - 1) // PAGE_SIZE + 1
+        page = clamp(page, 1, num_pages)
+
+        offset = (page - 1) * PAGE_SIZE
+        cursor.execute(f'''
+            SELECT {", ".join(COLUMNS4)}
+            FROM fact
+	    ORDER BY {order_by}
+            OFFSET %s
+            LIMIT %s
+        ''', [offset, PAGE_SIZE])
+        rows = namedtuplefetchall(cursor)
+
+    imo_deleted = request.GET.get('deleted', False)
+    if imo_deleted:
+        msg = f'✔ IMO {imo_deleted} deleted'
+
+    context = {
+        'nbar': 'ship_dim',
+        'page': page,
+        'rows': rows,
+        'num_pages': num_pages,
+        'msg': msg,
+	'order_by': order_by
+    }
+    return render(request, 'ship_dim.html', context)
 
 
