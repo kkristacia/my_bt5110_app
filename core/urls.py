@@ -18,6 +18,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('aggregation/', app.views.aggregation, name='aggregation'), 
     path('visual/', app.views.visual, name='visual'), 
+    path('fact/', app.views.fact, name='fact')
 ]
 
 
