@@ -333,8 +333,8 @@ def visual(request):
         tts_li.append(rows2[i][1]) 
         tfc_li.append(rows2[i][2])
 
-    fig3 = go.Scatter(x=np.log10(tts_li),y=np.log10(co2_li), mode='markers') 
-    fig4 = go.Scatter(x=np.log10(tts_li),y=np.log10(tfc_li), mode='markers') 
+    fig3 = go.Scatter(x=np.log10(tts_li),y=np.log10(co2_li), mode='markers',name='log10 total co2') 
+    fig4 = go.Scatter(x=np.log10(tts_li),y=np.log10(tfc_li), mode='markers',name='log10 total time at sea') 
     
     lr=LinearRegression().fit(np.log10(tts_li).reshape(-1,1),np.log10(co2_li).reshape(-1,1))
     lr_y_pred = lr.predict(np.log10(tts_li).reshape(-1,1))  
@@ -342,14 +342,14 @@ def visual(request):
     for i in range(len(lr_y_pred)):
         lr_y_pred_li.append(lr_y_pred[i][0])
 
-    fig3_lr= go.Scatter(x=np.log10(tts_li),y=lr_y_pred_li,line=dict(color='firebrick', width=4))  
+    fig3_lr= go.Scatter(x=np.log10(tts_li),y=lr_y_pred_li,line=dict(color='firebrick', width=4), name='linear regression')  
 
     lr2=LinearRegression().fit(np.log10(tts_li).reshape(-1,1),np.log10(tfc_li).reshape(-1,1))
     lr2_y_pred = lr2.predict(np.log10(tts_li).reshape(-1,1))  
     lr2_y_pred_li=[]
     for i in range(len(lr2_y_pred)):
         lr2_y_pred_li.append(lr2_y_pred[i][0])
-    fig4_lr= go.Scatter(x=np.log10(tts_li),y=lr2_y_pred_li,line=dict(color='firebrick', width=4))  
+    fig4_lr= go.Scatter(x=np.log10(tts_li),y=lr2_y_pred_li,line=dict(color='firebrick', width=4),name='linear regression')  
 
     layout3 = {
         'title': 'Log_10(Total time at sea) versus Log_10(Total Co2)',
@@ -360,9 +360,9 @@ def visual(request):
         'width': 560,
     }
     layout4 = {
-        'title': 'Total time at sea versus Total Fuel Consumption',
-        'yaxis_title': 'Total Fuel Consumption)',
-        'xaxis_title': 'Total time at sea',
+        'title': 'Log_10(Total time at sea) versus Log_10(Total Fuel Consumption)',
+        'yaxis_title': 'Log_10(Total Fuel Consumption)',
+        'xaxis_title': 'Log_10(Total time at sea)',
         'height': 620,
         'width': 560,
     }
