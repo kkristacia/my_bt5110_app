@@ -499,65 +499,44 @@ def adv_q_visual(request):
 
     #print(str(rows))
     # Generating some data for plots.
-    bulkcarrier_25pc_li=[]
-    bulkcarrier_50pc_li=[]
-    bulkcarrier_75pc_li=[]
-    bulkcarrier_95pc_li=[]
-
-    containership_25pc_li=[]
-    containership_50pc_li=[]
-    containership_75pc_li=[]
-    containership_95pc_li=[]
-
     year_li=[2019,2020,2021]
-    
-    bulkcarrier_25pc_li.append(rows[0][2])
-    bulkcarrier_25pc_li.append(rows[9][2])
-    bulkcarrier_25pc_li.append(rows[18][2])
+    eedi_agg_25pc_li=[]
+    eedi_agg_50pc_li=[]
+    eedi_agg_75pc_li=[]
+    eedi_agg_95pc_li=[]
 
-    bulkcarrier_50pc_li.append(rows[0][3])
-    bulkcarrier_50pc_li.append(rows[9][3])
-    bulkcarrier_50pc_li.append(rows[18][3])
+    eedi_agg_25pc_li.append(rows[8][2])
+    eedi_agg_25pc_li.append(rows[17][2])
+    eedi_agg_25pc_li.append(rows[27][2])
 
-    bulkcarrier_75pc_li.append(rows[0][4])
-    bulkcarrier_75pc_li.append(rows[9][4])
-    bulkcarrier_75pc_li.append(rows[18][4])
+    eedi_agg_50pc_li.append(rows[8][3])
+    eedi_agg_50pc_li.append(rows[17][3])
+    eedi_agg_50pc_li.append(rows[27][3])
 
-    bulkcarrier_95pc_li.append(rows[3][5])
-    bulkcarrier_95pc_li.append(rows[12][5])
-    bulkcarrier_95pc_li.append(rows[22][5])
+    eedi_agg_75pc_li.append(rows[8][4])
+    eedi_agg_75pc_li.append(rows[17][4])
+    eedi_agg_75pc_li.append(rows[27][4])
 
-    containership_25pc_li.append(rows[3][2])
-    containership_25pc_li.append(rows[12][2])
-    containership_25pc_li.append(rows[22][2])
-
-    containership_50pc_li.append(rows[3][3])
-    containership_50pc_li.append(rows[12][3])
-    containership_50pc_li.append(rows[22][3])
-
-    containership_75pc_li.append(rows[3][4])
-    containership_75pc_li.append(rows[12][4])
-    containership_75pc_li.append(rows[22][4])
-
-    containership_95pc_li.append(rows[3][5])
-    containership_95pc_li.append(rows[12][5])
-    containership_95pc_li.append(rows[22][5])
-
-
-    
-    fig1a = go.Scatter(x=year_li,y=bulkcarrier_25pc_li, name='Bulk carrier 25th percentile') 
-    fig1b = go.Scatter(x=year_li,y=bulkcarrier_50pc_li, name='Bulk carrier 50th percentile') 
-    fig1c = go.Scatter(x=year_li,y=bulkcarrier_75pc_li, name='Bulk carrier 75th percentile') 
-    fig1d = go.Scatter(x=year_li,y=bulkcarrier_95pc_li, name='Bulk carrier 95th percentile') 
-
-    fig1e = go.Scatter(x=year_li,y=containership_25pc_li, name='container ship 25th percentile') 
-    fig1f = go.Scatter(x=year_li,y=containership_50pc_li, name='container ship 50th percentile') 
-    fig1g = go.Scatter(x=year_li,y=containership_75pc_li, name='container ship 75th percentile') 
-    fig1h = go.Scatter(x=year_li,y=containership_95pc_li, name='container ship 95th percentile')  
+    eedi_agg_95pc_li.append(rows[8][5])
+    eedi_agg_95pc_li.append(rows[17][5])
+    eedi_agg_95pc_li.append(rows[27][5])
+ 
+    fig1a = go.Scatter(x=year_li,y=eedi_agg_25pc_li,name='25th percentile') 
+    fig1b = go.Scatter(x=year_li,y=eedi_agg_50pc_li,name='50th percentile') 
+    fig1c = go.Scatter(x=year_li,y=eedi_agg_75pc_li,name='75th percentile') 
+    fig1d = go.Scatter(x=year_li,y=eedi_agg_95pc_li) 
 
     # Setting layout of the figure.
     layout = {
-        'title': 'Bulk carrier/ container ship eedi 25, 50, 75, and  95th percentile by year'  ,
+        'title':  'aggregated ship type 25th-75th percentile eedi versus year' ,
+        'xaxis_title': 'year',
+        'yaxis_title': 'EEDI',
+        'height': 620,
+        'width': 560,
+    }
+
+    layout_E = {
+        'title':  'aggregated ship type 95th percentile eedi versus year' ,
         'xaxis_title': 'year',
         'yaxis_title': 'EEDI',
         'height': 620,
@@ -566,7 +545,9 @@ def adv_q_visual(request):
 
 
     # Getting HTML needed to render the plot.
-    plot_div = plot({'data': [fig1a,fig1b, fig1c, fig1d,fig1e,fig1f,fig1g,fig1h], 'layout': layout}, 
+    plot_div = plot({'data': [fig1a,fig1b,fig1c], 'layout': layout}, 
+                    output_type='div')
+    plot_div_E = plot({'data': [fig1d], 'layout': layout_E}, 
                     output_type='div')
 
 #************** second advanced query visualization ************************
@@ -640,7 +621,7 @@ def adv_q_visual(request):
 
    
     return render(request, 'adv_q_visual.html', 
-                  context={'plot_div': plot_div, 'plot_div2': plot_div2,'plot_div3': plot_div3,'nbar': 'adv_q_visual'})
+                  context={'plot_div': plot_div,'plot_div_E': plot_div_E, 'plot_div2': plot_div2,'plot_div3': plot_div3,'nbar': 'adv_q_visual'})
 
 
 
