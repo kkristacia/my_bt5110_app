@@ -38,11 +38,9 @@
         <tr>
           <th class="ordering" onclick="window.location='/fact/?order_by=ship_id'">ship_id</th>
           <th class="ordering" onclick="window.location='/fact/?order_by=verifier_id'">verifier_id</th>
+          <th class="ordering" onclick="window.location='/fact/?order_by=date_id'">date_id</th>
           <th class="ordering" onclick="window.location='/fact/?order_by=eedi'">eedi</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=report_period'">report_period</th> 
 	  <th class="ordering" onclick="window.location='/fact/?order_by=port_regist'">port_regist</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=issue_date'">issue_date</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=expiry_date'">expiry_date</th> 
 	  <th class="ordering" onclick="window.location='/fact/?order_by=total_fuel_consmp'">total_fuel_consmp</th> 
 	  <th class="ordering" onclick="window.location='/fact/?order_by=total_co2'">total_co2</th> 
 	  <th class="ordering" onclick="window.location='/fact/?order_by=total_time_sea'">total_time_sea</th> 
@@ -51,7 +49,7 @@
         </tr>
       </thead>
      {% for row in rows %}
-   <!--     <tr style="cursor:pointer;" onclick="window.location='/fact/ship_id/{{ row.imo }}'"> -->
+   <!--     <tr style="cursor:pointer;" onclick="window.location='/fact/ship_id/{{ row.ship_id }}'"> -->
           {% for val in row %}
           <td>{{ val|default:'0' }}</td>
           {% endfor %}

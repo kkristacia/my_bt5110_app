@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %} Fact {% endblock %}
+{% block title %} Dimension table: Verifier {% endblock %}
 {% load static %}
 
 {% block content %}
 <div class="container" style="padding-bottom: 50px;">
-  <h2>Fact</h2>
+  <h2>Dimension table: Verifier</h2>
   {% if msg %}
     <span class="text-success h4">{{ msg }}</span>
   {% endif %}
@@ -36,18 +36,13 @@
     <table class="table table-hover table-striped">
       <thead>
         <tr>
-          <th class="ordering" onclick="window.location='/fact/?order_by=ship_id'">ship_id</th>
-          <th class="ordering" onclick="window.location='/fact/?order_by=verifier_id'">verifier_id</th>
-          <th class="ordering" onclick="window.location='/fact/?order_by=eedi'">eedi</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=report_period'">report_period</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=port_regist'">port_regist</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=issue_date'">issue_date</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=expiry_date'">expiry_date</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=total_fuel_consmp'">total_fuel_consmp</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=total_co2'">total_co2</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=total_time_sea'">total_time_sea</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=co2_emm_per_dist'">co2_emm_per_dist</th> 
-	  <th class="ordering" onclick="window.location='/fact/?order_by=co2_emm_per_tw'">co2_emm_per_tw</th> 
+          <th class="ordering" onclick="window.location='/verifier_dim/?order_by=verifier_id'">verifier_id</th>
+          <th class="ordering" onclick="window.location='/verifier_dim/?order_by=verifier_name'">verifier_name</th>
+          <th class="ordering" onclick="window.location='/verifier_dim/?order_by=nab_company'">nab_company</th> 
+	  <th class="ordering" onclick="window.location='/verifier_dim/?order_by=verifier_address'">verifier_address</th> 
+	  <th class="ordering" onclick="window.location='/verifier_dim/?order_by=verifier_city'">verifier_city</th> 
+	  <th class="ordering" onclick="window.location='/verifier_dim/?order_by=accredition_no'">accredition_no</th> 
+	  <th class="ordering" onclick="window.location='/verifier_dim/?order_by=verifier_country'">verifier_country</th> 
         </tr>
       </thead>
      {% for row in rows %}
