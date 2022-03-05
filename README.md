@@ -1,6 +1,6 @@
 # BT5110 - Your first Django app
 
-Chen Hong (A0231993X)
+Chen Hong, Kristacia Kang, Hpone Myat Khine, Sae Jin Jang
 
 Hello, and welcome to my herokuapp. It is deployed on:
 ## http://bt5110-demo-chen.herokuapp.com/
